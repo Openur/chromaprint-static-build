@@ -83,6 +83,40 @@ jobs:
           path: packages/ffmpeg/artifacts/
           if-no-files-found: error
 
+  build_mac:
+    runs-on: macos-15
+    strategy:
+      fail-fast: false
+      matrix:
+        architecture:
+          - arm64
+          - x64
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install dependencies
+        run: brew install nasm
+
+      - name: Build
+        env:
+          ARCH: ${{ matrix.architecture }}
+        run: ./packages/ffmpeg/build-mac.sh
+
+      - name: Display build information
+        run: |
+          packages/ffmpeg/artifacts/ffmpeg-*/opt/ffmpeg/bin/ffmpeg -hide_banner -version
+          packages/ffmpeg/artifacts/ffmpeg-*/opt/ffmpeg/bin/ffmpeg -hide_banner -buildconf
+          packages/ffmpeg/artifacts/ffmpeg-*/opt/ffmpeg/bin/ffmpeg -hide_banner -demuxers
+          packages/ffmpeg/artifacts/ffmpeg-*/opt/ffmpeg/bin/ffmpeg -hide_banner -decoders
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: ffmpeg-macos-${{ matrix.architecture }}
+          path: packages/ffmpeg/artifacts/
+          if-no-files-found: error
+
   build_windows:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -151,6 +185,7 @@ jobs:
     needs:
       - prepare
       - build_linux
+      - build_mac
       - build_windows
     runs-on: ubuntu-latest
     steps:
