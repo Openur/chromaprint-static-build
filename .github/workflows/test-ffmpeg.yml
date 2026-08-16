@@ -1,0 +1,172 @@
+name: Build ffmpeg
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - "main"
+    paths:
+      - ".github/workflows/test-ffmpeg.yml"
+      - "packages/**"
+  pull_request:
+    branches:
+      - "main"
+    paths:
+      - ".github/workflows/test-ffmpeg.yml"
+      - "packages/**"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}-${{ github.event_name == 'workflow_dispatch' }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      semver: ${{ steps.variables.outputs.version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup variables
+        id: variables
+        shell: bash
+        run: |
+          source packages/ffmpeg/common.sh
+
+          version="${FFMPEG_VERSION#n}"
+
+          if [[ $version =~ ^[0-9]+\.[0-9]+$ ]]; then
+            version="${version}.0"
+          fi
+
+          echo "version=$version" >> $GITHUB_OUTPUT
+
+      - name: Display version
+        run: echo ${{ steps.variables.outputs.version }}
+
+  build_linux:
+    runs-on: ${{ startsWith(matrix.architecture, 'arm') && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        architecture:
+          - arm
+          - arm64
+          - x64
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Build
+        uses: docker://mirror.gcr.io/debian:13.6
+        env:
+          ARCH: ${{ matrix.architecture }}
+        with:
+          args: /bin/sh -c "DEBIAN_FRONTEND=noninteractive; apt-get update && apt-get upgrade --yes && apt-get install --yes --no-install-suggests --no-install-recommends ca-certificates curl build-essential pkg-config nasm gcc-aarch64-linux-gnu g++-aarch64-linux-gnu libc6-dev-arm64-cross gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf libc6-dev-armhf-cross && ./packages/ffmpeg/build-linux.sh"
+
+      - name: Display build information
+        run: |
+          packages/ffmpeg/artifacts/ffmpeg-*/opt/ffmpeg/bin/ffmpeg -hide_banner -version
+          packages/ffmpeg/artifacts/ffmpeg-*/opt/ffmpeg/bin/ffmpeg -hide_banner -buildconf
+          packages/ffmpeg/artifacts/ffmpeg-*/opt/ffmpeg/bin/ffmpeg -hide_banner -demuxers
+          packages/ffmpeg/artifacts/ffmpeg-*/opt/ffmpeg/bin/ffmpeg -hide_banner -decoders
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: ffmpeg-linux-${{ matrix.architecture }}
+          path: packages/ffmpeg/artifacts/
+          if-no-files-found: error
+
+  build_windows:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        architecture:
+          - x86
+        include:
+          - architecture: x64
+            os: windows-latest
+            msystem: CLANG64
+          - architecture: arm64
+            os: windows-11-arm
+            msystem: CLANGARM64
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Build (gcc)
+        uses: docker://mirror.gcr.io/debian:13.6
+        if: runner.os == 'Linux'
+        env:
+          ARCH: ${{ matrix.architecture }}
+        with:
+          args: /bin/sh -c "DEBIAN_FRONTEND=noninteractive; apt-get update && apt-get upgrade --yes && apt-get install --yes --no-install-suggests --no-install-recommends ca-certificates curl build-essential pkg-config gcc-mingw-w64 g++-mingw-w64 nasm && ./packages/ffmpeg/build-windows.sh"
+
+      - name: Setup MSYS2
+        uses: msys2/setup-msys2@66cd2cce69caa17b53920067426061ca1de3a884 # v2.32.0
+        if: runner.os == 'Windows'
+        with:
+          msystem: ${{ matrix.msystem }}
+          update: true
+          install: >-
+            curl
+            make
+            pkgconf
+            diffutils
+          pacboy: >-
+            clang:p
+            nasm:p
+
+      - name: Build (clang)
+        if: runner.os == 'Windows'
+        env:
+          ARCH: ${{ matrix.architecture }}
+        run: msys2 -c './packages/ffmpeg/build-windows.sh'
+
+      - name: Display build information
+        if: runner.os == 'Windows'
+        shell: bash
+        run: |
+          packages/ffmpeg/artifacts/ffmpeg-*/opt/ffmpeg/bin/ffmpeg.exe -hide_banner -version
+          packages/ffmpeg/artifacts/ffmpeg-*/opt/ffmpeg/bin/ffmpeg.exe -hide_banner -buildconf
+          packages/ffmpeg/artifacts/ffmpeg-*/opt/ffmpeg/bin/ffmpeg.exe -hide_banner -demuxers
+          packages/ffmpeg/artifacts/ffmpeg-*/opt/ffmpeg/bin/ffmpeg.exe -hide_banner -decoders
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: ffmpeg-win-${{ matrix.architecture }}
+          path: packages/ffmpeg/artifacts/
+          if-no-files-found: error
+
+  release:
+    needs:
+      - prepare
+      - build_linux
+      - build_windows
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          pattern: ffmpeg-*
+          path: artifacts
+          merge-multiple: true
+
+      - name: Make tarballs
+        run: |
+          mkdir artifacts/release/
+          cd artifacts/
+          for dir in ffmpeg-*; do
+            name=$(basename $dir)
+            tar -cJf release/$name.tar.xz -C $(dirname $dir) $name
+          done
+          ls -lha release/
