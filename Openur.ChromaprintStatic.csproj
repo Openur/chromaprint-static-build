@@ -1,0 +1,70 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <NoBuild>true</NoBuild>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <NoWarn>$(NoWarn);NU5128</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>Openur.ChromaprintStatic</PackageId>
+    <Title>Openur.ChromaprintStatic</Title>
+    <Version>1.0.0</Version>
+    <Authors>Openur Team</Authors>
+    <Description>This package contains static builds of the native fpcalc code for various platforms.</Description>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="/" />
+
+    <Content Include="$(MSBuildThisFileDirectory)artifacts\fpcalc-linux-arm\fpcalc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <PackagePath>runtimes/linux-arm/native/</PackagePath>
+      <Pack>true</Pack>
+    </Content>
+
+    <Content Include="$(MSBuildThisFileDirectory)artifacts\fpcalc-linux-arm64\fpcalc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <PackagePath>runtimes/linux-arm64/native/</PackagePath>
+      <Pack>true</Pack>
+    </Content>
+
+    <Content Include="$(MSBuildThisFileDirectory)artifacts\fpcalc-linux-x64\fpcalc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <PackagePath>runtimes/linux-x64/native/</PackagePath>
+      <Pack>true</Pack>
+    </Content>
+
+    <Content Include="$(MSBuildThisFileDirectory)artifacts\fpcalc-macos-arm64\fpcalc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <PackagePath>runtimes/osx-arm64/native/</PackagePath>
+      <Pack>true</Pack>
+    </Content>
+
+    <Content Include="$(MSBuildThisFileDirectory)artifacts\fpcalc-macos-x64\fpcalc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <PackagePath>runtimes/osx-x64/native/</PackagePath>
+      <Pack>true</Pack>
+    </Content>
+
+    <Content Include="$(MSBuildThisFileDirectory)artifacts\fpcalc-windows-arm64\fpcalc.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <PackagePath>runtimes/win-arm64/native/</PackagePath>
+      <Pack>true</Pack>
+    </Content>
+
+    <Content Include="$(MSBuildThisFileDirectory)artifacts\fpcalc-windows-x64\fpcalc.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <PackagePath>runtimes/win-x64/native/</PackagePath>
+      <Pack>true</Pack>
+    </Content>
+
+    <Content Include="$(MSBuildThisFileDirectory)artifacts\fpcalc-windows-x86\fpcalc.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <PackagePath>runtimes/win-x86/native/</PackagePath>
+      <Pack>true</Pack>
+    </Content>
+  </ItemGroup>
+</Project>

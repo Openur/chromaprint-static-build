@@ -1,0 +1,7 @@
+artifacts/
+build/
+build.*/
+
+*.tar.bz
+*.tar.gz
+*.tar.xz
