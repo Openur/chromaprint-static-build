@@ -6,7 +6,7 @@ on:
 
 jobs:
   test-linux:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     strategy:
       matrix:
         fft:
@@ -34,7 +34,7 @@ jobs:
   # fpcalc against a pinned FFmpeg. Nothing builds the FFmpeg audio reader
   # against the system FFmpeg, which is the configuration distributions use.
   test-linux-tools:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@v3
     - name: Install dependencies
@@ -73,7 +73,7 @@ jobs:
         make test VERBOSE=1
 
   package-linux:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     strategy:
       matrix:
         arch:
@@ -101,7 +101,7 @@ jobs:
         path: artifacts/
 
   package-windows:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     strategy:
       matrix:
         arch:
