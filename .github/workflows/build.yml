@@ -110,6 +110,66 @@ jobs:
           path: packages/chromaprint/artifacts/opt/chromaprint/bin
           if-no-files-found: error
 
+  build_linux_musl:
+    runs-on: ${{ startsWith(matrix.architecture, 'arm') && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        architecture:
+          - arm64
+          - x64
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Cache ffmpeg build artifacts
+        id: ffmpeg-cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: packages/ffmpeg/artifacts
+          key: ${{ runner.os }}-ffmpeg-linux-musl-${{ matrix.architecture }}-${{ hashFiles('packages/common.sh', 'packages/ffmpeg/build-linux-musl.sh') }}
+
+      - name: Build ffmpeg
+        if: steps.ffmpeg-cache.outputs.cache-hit != 'true'
+        uses: docker://mirror.gcr.io/alpine:3.24.1
+        env:
+          ARCH: ${{ matrix.architecture }}
+        with:
+          args: /bin/sh -c "apk add -U --no-cache bash curl xz alpine-sdk make nasm && ./packages/ffmpeg/build-linux-musl.sh"
+
+      - name: Display build information
+        run: |
+          packages/ffmpeg/artifacts/ffmpeg-*/opt/ffmpeg/bin/ffmpeg -hide_banner -version
+          packages/ffmpeg/artifacts/ffmpeg-*/opt/ffmpeg/bin/ffmpeg -hide_banner -buildconf
+          packages/ffmpeg/artifacts/ffmpeg-*/opt/ffmpeg/bin/ffmpeg -hide_banner -demuxers
+          packages/ffmpeg/artifacts/ffmpeg-*/opt/ffmpeg/bin/ffmpeg -hide_banner -decoders
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: ffmpeg-linux-musl-${{ matrix.architecture }}
+          path: packages/ffmpeg/artifacts/
+          if-no-files-found: error
+
+      - name: Build chromaprint
+        uses: docker://mirror.gcr.io/alpine:3.24.1
+        env:
+          ARCH: ${{ matrix.architecture }}
+        with:
+          args: /bin/sh -c "apk add -U --no-cache bash curl xz alpine-sdk make cmake && ./packages/chromaprint/build-linux-musl.sh"
+
+      - name: Display build information
+        run: |
+          file packages/chromaprint/artifacts/opt/chromaprint/bin/fpcalc
+          packages/chromaprint/artifacts/opt/chromaprint/bin/fpcalc -version || true
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: fpcalc-linux-musl-${{ matrix.architecture }}
+          path: packages/chromaprint/artifacts/opt/chromaprint/bin
+          if-no-files-found: error
+
   build_mac:
     runs-on: macos-15
     strategy:
@@ -271,6 +331,7 @@ jobs:
     needs:
       - prepare
       - build_linux
+      - build_linux_musl
       - build_mac
       - build_windows
     runs-on: ubuntu-latest

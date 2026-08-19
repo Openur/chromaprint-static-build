@@ -37,6 +37,18 @@
       <Pack>true</Pack>
     </Content>
 
+    <Content Include="$(MSBuildThisFileDirectory)artifacts\fpcalc-linux-musl-arm64\fpcalc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <PackagePath>runtimes/linux-musl-arm64/native/</PackagePath>
+      <Pack>true</Pack>
+    </Content>
+
+    <Content Include="$(MSBuildThisFileDirectory)artifacts\fpcalc-linux-musl-x64\fpcalc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <PackagePath>runtimes/linux-musl-x64/native/</PackagePath>
+      <Pack>true</Pack>
+    </Content>
+
     <Content Include="$(MSBuildThisFileDirectory)artifacts\fpcalc-macos-arm64\fpcalc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <PackagePath>runtimes/osx-arm64/native/</PackagePath>

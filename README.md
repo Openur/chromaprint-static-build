@@ -4,5 +4,6 @@ This package contains static builds of the native fpcalc code for various platfo
 
 ## Supported platforms
 - Linux (arm/arm64/x64)
+- Linux MUSL (arm64/x64)
 - Windows (arm64/x64/x86)
 - macOS (arm64/x64)
