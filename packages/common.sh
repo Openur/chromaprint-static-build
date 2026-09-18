@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # renovate: datasource=github-tags depName=ffmpeg/ffmpeg extractVersion=^n(?<version>\d+\.\d+(\.\d+)?)$
-FFMPEG_VERSION=9.0.1
+FFMPEG_VERSION=9.0.2
 
 # renovate: datasource=github-releases depName=acoustid/chromaprint extractVersion=^v(?<version>\d+\.\d+(\.\d+)?)$
 CHROMAPRINT_VERSION=1.6.1
