@@ -131,7 +131,7 @@ jobs:
 
       - name: Build ffmpeg
         if: steps.ffmpeg-cache.outputs.cache-hit != 'true'
-        uses: docker://mirror.gcr.io/alpine:3.24.1
+        uses: docker://mirror.gcr.io/alpine:3.24.2
         env:
           ARCH: ${{ matrix.architecture }}
         with:
@@ -152,7 +152,7 @@ jobs:
           if-no-files-found: error
 
       - name: Build chromaprint
-        uses: docker://mirror.gcr.io/alpine:3.24.1
+        uses: docker://mirror.gcr.io/alpine:3.24.2
         env:
           ARCH: ${{ matrix.architecture }}
         with:
