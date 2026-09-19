@@ -71,7 +71,7 @@ jobs:
 
       - name: Build ffmpeg
         if: steps.ffmpeg-cache.outputs.cache-hit != 'true'
-        uses: docker://mirror.gcr.io/debian:13.6
+        uses: docker://mirror.gcr.io/debian:13.7
         env:
           ARCH: ${{ matrix.architecture }}
         with:
@@ -92,7 +92,7 @@ jobs:
           if-no-files-found: error
 
       - name: Build chromaprint
-        uses: docker://mirror.gcr.io/debian:13.6
+        uses: docker://mirror.gcr.io/debian:13.7
         env:
           ARCH: ${{ matrix.architecture }}
         with:
@@ -261,7 +261,7 @@ jobs:
 
       - name: Build ffmpeg (gcc)
         if: steps.ffmpeg-cache.outputs.cache-hit != 'true' && runner.os == 'Linux'
-        uses: docker://mirror.gcr.io/debian:13.6
+        uses: docker://mirror.gcr.io/debian:13.7
         env:
           ARCH: ${{ matrix.architecture }}
         with:
@@ -307,7 +307,7 @@ jobs:
           if-no-files-found: error
 
       - name: Build chromaprint (gcc)
-        uses: docker://mirror.gcr.io/debian:13.6
+        uses: docker://mirror.gcr.io/debian:13.7
         if: runner.os == 'Linux'
         env:
           ARCH: ${{ matrix.architecture }}
