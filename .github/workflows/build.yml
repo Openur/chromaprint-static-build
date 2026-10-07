@@ -85,7 +85,7 @@ jobs:
           packages/ffmpeg/artifacts/ffmpeg-*/opt/ffmpeg/bin/ffmpeg -hide_banner -decoders
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: ffmpeg-linux-${{ matrix.architecture }}
           path: packages/ffmpeg/artifacts/
@@ -104,7 +104,7 @@ jobs:
           packages/chromaprint/artifacts/opt/chromaprint/bin/fpcalc -version || true
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: fpcalc-linux-${{ matrix.architecture }}
           path: packages/chromaprint/artifacts/opt/chromaprint/bin
@@ -145,7 +145,7 @@ jobs:
           packages/ffmpeg/artifacts/ffmpeg-*/opt/ffmpeg/bin/ffmpeg -hide_banner -decoders
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: ffmpeg-linux-musl-${{ matrix.architecture }}
           path: packages/ffmpeg/artifacts/
@@ -164,7 +164,7 @@ jobs:
           packages/chromaprint/artifacts/opt/chromaprint/bin/fpcalc -version || true
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: fpcalc-linux-musl-${{ matrix.architecture }}
           path: packages/chromaprint/artifacts/opt/chromaprint/bin
@@ -208,7 +208,7 @@ jobs:
           packages/ffmpeg/artifacts/ffmpeg-*/opt/ffmpeg/bin/ffmpeg -hide_banner -decoders
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: ffmpeg-macos-${{ matrix.architecture }}
           path: packages/ffmpeg/artifacts/
@@ -226,7 +226,7 @@ jobs:
           packages/chromaprint/artifacts/opt/chromaprint/bin/fpcalc -version || true
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: fpcalc-macos-${{ matrix.architecture }}
           path: packages/chromaprint/artifacts/opt/chromaprint/bin
@@ -300,7 +300,7 @@ jobs:
           packages/ffmpeg/artifacts/ffmpeg-*/opt/ffmpeg/bin/ffmpeg.exe -hide_banner -decoders
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: ffmpeg-windows-${{ matrix.architecture }}
           path: packages/ffmpeg/artifacts/
@@ -321,7 +321,7 @@ jobs:
         run: msys2 -c './packages/chromaprint/build-windows.sh'
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: fpcalc-windows-${{ matrix.architecture }}
           path: packages/chromaprint/artifacts/opt/chromaprint/bin
@@ -349,7 +349,7 @@ jobs:
           dotnet-version: '10.0.x'
 
       - name: Download artifacts
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           pattern: fpcalc-*
           path: artifacts
@@ -363,7 +363,7 @@ jobs:
         run: dotnet pack -c Release -p:Version=${{ needs.prepare.outputs.semver }}.${{ github.run_number }}
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: packages
           path: artifacts/package/release/Openur.ChromaprintStatic.*.nupkg
@@ -379,13 +379,13 @@ jobs:
     if: github.event_name == 'workflow_dispatch' && github.ref_name == 'main'
     steps:
       - name: Download artifacts
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: packages
           path: packages
 
       - name: Download artifacts
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           pattern: fpcalc-*
           path: artifacts
@@ -423,7 +423,7 @@ jobs:
       packages: write
     steps:
       - name: Download artifacts
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: packages
           path: packages
