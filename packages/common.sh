@@ -4,7 +4,7 @@
 FFMPEG_VERSION=9.0.2
 
 # renovate: datasource=github-releases depName=acoustid/chromaprint extractVersion=^v(?<version>\d+\.\d+(\.\d+)?)$
-CHROMAPRINT_VERSION=1.6.1
+CHROMAPRINT_VERSION=1.6.2
 
 FFMPEG_TARBALL=ffmpeg-${FFMPEG_VERSION}.tar.xz
 FFMPEG_TARBALL_URL=https://ffmpeg.org/releases/${FFMPEG_TARBALL}
