@@ -6,13 +6,13 @@ on:
     branches:
       - "main"
     paths:
-      - "build.yml"
+      - ".github/workflows/build.yml"
       - "packages/**"
   pull_request:
     branches:
       - "main"
     paths:
-      - "build.yml"
+      - ".github/workflows/build.yml"
       - "packages/**"
 
 concurrency:
